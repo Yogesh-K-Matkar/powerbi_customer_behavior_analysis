@@ -40,9 +40,6 @@ finally:
 
     print(csv_columns_count) # display the number of columns in the DataFrame to verify that all expected columns are present in the dataset. 
 
-    print("Final block executed.") # print a message indicating that the final block of code has been executed, which runs regardless of whether an exception occurred or not.
-
-
 
 # In[103]:
 
@@ -102,7 +99,7 @@ df=df.rename(columns={'purchase_amount_(usd)':'purchase_amount'},inplace=False) 
 df.columns # display the column names of the dataset to verify that they have been converted to lowercase.
 
 
-# In[112]:
+# In[ ]:
 
 
 df['review_rating']=df.groupby('category')['review_rating'].transform(lambda x: x.fillna(x.mean())) # calculate the mean review rating for each product and assign it back to the 'Review Rating' column in the original DataFrame, effectively replacing individual ratings with the average rating for each product.
@@ -187,26 +184,26 @@ def connect_postgres():
 
     try:
          if not settings_path is '': 
-            read_file = open(settings_path, 'r') 
+            read_file = open(settings_path, 'r') # open the settings.json file in read mode to access the connection settings.
          else:    
             print(f"No settings file found. Please check your settings.json.")
             return conn_str
 
          if not read_file is None:            
-            settings = json.load(read_file)
+            settings = json.load(read_file) # load the contents of the settings.json file into a Python dictionary to access the connection settings.
          else:    
             print(f"No connections found. Please check your settings.json.")
             return conn_str
 
          if not settings is None:
-            connections = settings.get('sqltools.connections',None)
+            connections = settings.get('sqltools.connections',None) # retrieve the list of database connections from the settings dictionary using the key 'sqltools.connections' to access the connection settings.
          else:    
             print(f"No connections found. Please check your settings.json.")
             return conn_str
 
          if not connections is None:
            pg_conn = next((c for c in connections 
-                       if c['driver'] == 'PostgreSQL' and c['database']=='customer_behavior'), None)
+                       if c['driver'] == 'PostgreSQL' and c['database'] == 'customer_behavior'), None) # use a list comprehension to find the first PostgreSQL connection in the list of connections that has a driver of 'PostgreSQL' and a database name of 'customer_behavior'.
          else:    
             print(f"No connections found. Please check your settings.json.")
             return conn_str
@@ -267,10 +264,10 @@ def transfer_data_to_postgres(df, table_name, conn_str):
             engine.dispose() # dispose of the database connection engine to free up resources
 
 
-# In[119]:
+# In[ ]:
 
 
-def process_data_transfer(df, contenttype):
+def process_data_transfer_toPostgres(df, contenttype):
 
 
   try:
@@ -303,8 +300,8 @@ def process_data_transfer(df, contenttype):
 
 
 
-# In[120]:
+# In[ ]:
 
 
-process_data_transfer(df, 'customer_shopping_behavior'); # call the function to transfer data from Python to PostgreSQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
+process_data_transfer_toPostgres(df, 'customer_shopping_behavior'); # call the function to transfer data from Python to PostgreSQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
 
