@@ -3,12 +3,25 @@
   {
    "ssh": "Disabled",
    "previewLimit": 50,
+   "driver": "PostgreSQL",
    "server": "localhost",
    "port": 5432,
-   "password": "admin",
-   "driver": "PostgreSQL",
    "database": "customer_behavior",
-   "username": "postgres"
+   "username": "postgres",
+   "password": "admin"
+  },
+  {
+   "driver": "MySQL",
+   "server": "localhost",
+   "port": 3306,
+   "database": "customer_behavior",
+   "username": "root",
+   "password": "admin"
   }
+ ],
+ "cSpell.words": [
+  "dbtype",
+  "mysql",
+  "SQLDB"
  ]
 }
