@@ -20,8 +20,6 @@
 
 import json
 
-import pandas as pd  # import pandas library for data load and transform data(columns rename,drop column,null/missing value handle by median or mean,convert data type,groupby and merge, etc.)
-
 import mysql.connector as connector  # import mysql.connector library for connect to mysql database and perform sql query
 
 
@@ -98,6 +96,85 @@ def DB_Config(dbtype):
 # In[ ]:
 
 
+def cmd_create_table(mycursor):
+    try:
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS customers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            address VARCHAR(255)            
+        )
+        """
+        # define an SQL command to create a table named 'customers' with columns for id, name, email, and created_at.
+
+        mycursor.execute(create_table_query) # execute the SQL command to create the table in the MySQL database.
+
+        print("Table 'customers' created successfully.") # print a message indicating that the table has been created successfully.
+
+        mycursor.execute("SHOW TABLES") # execute an SQL command to show the tables in the MySQL database to verify that the 'customers' table has been created successfully.
+
+        if not mycursor is None:
+            print("Tables in the database:")
+
+            print("Print Table Name using for loop:")
+            for tb in mycursor: 
+                print(tb)
+
+
+
+    except Exception as e:
+        print(f"Error executing MySQL command: {e}")
+
+
+# In[ ]:
+
+
+def cmd_insert_into_table(conn):
+    try:
+        mycursor = conn.cursor()
+
+        insert_record_query = "INSERT INTO customers (name, address) VALUES (%s, %s)"        
+         # define an SQL command to insert a record into the 'customers' table with the name
+        insert_record_values = ("John Doe", "123 Main St") # define the values to be inserted into the 'customers' table for the name and address columns.
+
+        print(f"Inserting record into 'customers' table: Name:- {insert_record_values[0]} ' Address:- ' {insert_record_values[1]}") # print the name and address values that will be inserted into the 'customers' table to verify that the correct data is being inserted. 
+        mycursor.execute(insert_record_query, insert_record_values) # execute the SQL command to insert the record into the 'customers' table.
+
+        conn.commit() # commit the transaction to save the changes to the MySQL database.                
+
+
+
+        if mycursor.rowcount > 0:
+            print(f"{mycursor.rowcount} Record inserted successfully.") # print a message indicating that the record has been inserted successfully.       
+
+            mycursor.execute("SELECT * FROM customers") # execute an SQL command to select all records from the 'customers' table to verify that the record has been inserted successfully. 
+        else:
+            print("No records inserted.")
+
+
+    except Exception as e:
+        print(f"Error executing MySQL command: {e}")
+
+
+# In[ ]:
+
+
+def process_mysql_cmd(conn):
+    try:
+        mycursor = conn.cursor() # create a cursor object from the MySQL connection to execute SQL commands.
+
+        # Example SQL command to create a table
+        cmd_create_table(mycursor);
+
+        cmd_insert_into_table(conn) # call the cmd_insert_into_table function to insert a record into the 'customers' table in the MySQL database.
+
+    except Exception as e:
+        print(f"Error executing MySQL command: {e}")
+
+
+# In[ ]:
+
+
 def process_using_MySql_Connector():   
 
    dbconfig=None;
@@ -122,6 +199,8 @@ def process_using_MySql_Connector():
                if conn.is_connected():
                     print("Connected to MySQL database using MySQL Connector.") # You can add code here to transfer data from the DataFrame to the MySQL database using the connection object.
 
+                    process_mysql_cmd(conn);
+
                else:
                   print(f"No MySQL connection settings found. Please check your settings.json.")
 
@@ -142,10 +221,4 @@ def process_using_MySql_Connector():
 
 
 process_using_MySql_Connector() # call the function to transfer data from Python to MySQL database using MySQL Connector, which is an alternative method for connecting to MySQL databases and transferring data, providing flexibility in how the data transfer is performed. 
-
-
-# In[ ]:
-
-
-
 
