@@ -18,5 +18,6 @@
    "username": "root",
    "password": "admin"
   }
- ]
+ ],
+ "claudeCodeChat.permissions.yoloMode": false
 }

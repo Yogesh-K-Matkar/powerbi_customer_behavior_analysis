@@ -15,13 +15,13 @@
 # # 1. Install the required package for PostgreSQL connection (e.g., psycopg2 and sqlalchemy) through terminal - !pip install sqlalchemy  and !pip install psycopg2-binary
 # # 2. Import the necessary libraries for database connection and data transfer (e.g., psycopg2, sqlalchemy).
 
-# In[1]:
+# In[2]:
 
 
 import pandas as pd  # import pandas library for data load and transform data(columns rename,drop column,null/missing value handle by median or mean,convert data type,groupby and merge, etc.)
 
 
-# In[2]:
+# In[3]:
 
 
 try:
@@ -41,56 +41,56 @@ finally:
     print(csv_columns_count) # display the number of columns in the DataFrame to verify that all expected columns are present in the dataset. 
 
 
-# In[3]:
+# In[4]:
 
 
 df.head() # display first 5 rows of the dataset
 
 
-# In[4]:
+# In[5]:
 
 
 df.info() # display summary(no of rows and column count and data types) of the dataset, including data types and non-null counts
 
 
-# In[5]:
+# In[6]:
 
 
 df.describe() # display statistical summary of numerical columns of the dataset, including count, mean, std, min, 25%, 50%, 75%, and max values for each numeric column
 
 
-# In[6]:
+# In[7]:
 
 
 df.describe(include='all') # display statistical summary of all (numerical and categorical) columns of the dataset, including count, unique, top, freq for categorical columns and count, mean, std, min, 25%, 50%, 75%, and max values for numeric columns
 
 
-# In[7]:
+# In[8]:
 
 
 df.isnull().sum() # check for missing values in each column of the dataset and display the count of missing values for each column
 
 
-# In[8]:
+# In[9]:
 
 
 df.columns=df.columns.str.lower() # convert all column names to lowercase for consistency and easier access in code, allowing you to reference columns without worrying about case sensitivity.
 
 
-# In[9]:
+# In[10]:
 
 
 df.columns=df.columns.str.replace(' ', ' ') # replace multiple spaces in column names with single spaces before replacing spaces with underscores, ensuring that column names are clean and consistent for easier access in code, especially when referencing columns with spaces in their names.
 
 
-# In[10]:
+# In[11]:
 
 
 df.columns=df.columns.str.replace(' ', '_') # replace spaces in column names with underscores for easier access and to avoid issues when referencing columns in code, allowing you to use column names without spaces.
 
 
 
-# In[11]:
+# In[12]:
 
 
 df=df.rename(columns={'purchase_amount_(usd)':'purchase_amount'},inplace=False) # rename the 'purchase_amount_(usd)' column to 'purchase_amount' for consistency with the lowercase column names and to avoid issues when referencing the column in code, ensuring that all column names follow a consistent naming convention.
@@ -99,7 +99,7 @@ df=df.rename(columns={'purchase_amount_(usd)':'purchase_amount'},inplace=False) 
 df.columns # display the column names of the dataset to verify that they have been converted to lowercase.
 
 
-# In[12]:
+# In[13]:
 
 
 df['review_rating']=df.groupby('category')['review_rating'].transform(lambda x: x.fillna(x.mean())) # calculate the mean review rating for each product and assign it back to the 'Review Rating' column in the original DataFrame, effectively replacing individual ratings with the average rating for each product.
@@ -107,7 +107,7 @@ df['review_rating']=df.groupby('category')['review_rating'].transform(lambda x: 
 df.isnull().sum() # check for missing values again to confirm that the 'Review Rating' column no longer has any missing values after filling them with the mean ratings.
 
 
-# In[13]:
+# In[14]:
 
 
 # create new column 'age_group' based on 'age' column to categorize customers into age groups (e.g., 18-25, 26-35, etc.) for better analysis of purchase trends by age group.
@@ -117,13 +117,13 @@ age_groups_labels=['Young Adult','Adult','Middle-aged','Senior'] # define age gr
 df['age_group']=pd.qcut(df['age'], q=4, labels=age_groups_labels) # use pd.qcut to create age groups based on the 'age' column, dividing the customers into four equal groups (quartiles) and assigning the corresponding age group labels defined in 'age_groups_labels' to the new 'age_group' column.
 
 
-# In[14]:
+# In[15]:
 
 
 df[['age','age_group']].head(csv_rows_count) # display the 'age' and 'age_group' columns to verify that the age groups have been created correctly based on the age values in the dataset.
 
 
-# In[15]:
+# In[16]:
 
 
 # create purchase frequency days column to analyze how frequently customers make purchases and identify trends in purchase behavior over time.
@@ -137,7 +137,7 @@ df[["frequency_of_purchases","purchase_frequency_days"]].head(csv_rows_count) # 
 df.columns
 
 
-# In[16]:
+# In[17]:
 
 
  # remove not necessary column with unique values but 2 different columns with same values and rename the column to avoid confusion and redundancy in the dataset, ensuring that the dataset is clean and easier to analyze without duplicate or redundant columns.
@@ -151,7 +151,7 @@ df = df.drop('promo_code_used',axis=1) # remove the redundant 'promo_code_used' 
 df.columns
 
 
-# In[17]:
+# In[18]:
 
 
 # Data Transfer Process from Python to PostgreSQL database
@@ -231,7 +231,7 @@ def DB_Config(dbtype):
             read_file.close()
 
 
-# In[18]:
+# In[ ]:
 
 
 # 2. Transfer data DATAFRAME to PostgreSQL database
@@ -310,7 +310,7 @@ def DBConnect_MySQL(df, table_name,db_conn ):
             engine.dispose() # dispose of the database connection engine to free up resources
 
 
-# In[19]:
+# In[20]:
 
 
 def process_data_transfer_toSQLDB(df, contenttype, dbtype):
@@ -345,7 +345,7 @@ def process_data_transfer_toSQLDB(df, contenttype, dbtype):
                     print("Data transfer to PostgreSQL database failed.")           
 
             elif dbtype.lower() =='mysql':          
-                success= DBConnect_MySQL(df, 'customer', conn_db) # transfer the cleaned and processed DataFrame to the MySQL database using the transfer_data_to_mysql function defined earlier, specifying the table name as 'customer_shopping_behavior'.    
+                success= DBConnect_MySQL(df, 'customer_shopping_details', conn_db) # transfer the cleaned and processed DataFrame to the MySQL database using the transfer_data_to_mysql function defined earlier, specifying the table name as 'customer_shopping_behavior'.    
 
                 if success:
                     print("Data transfer to MySQL database successful.")
@@ -361,10 +361,10 @@ def process_data_transfer_toSQLDB(df, contenttype, dbtype):
         print(f"Error processing data transfer: {e}")        
 
 
-# In[ ]:
+# In[21]:
 
 
-process_data_transfer_toSQLDB(df, 'customer_shopping_behavior', 'PostgresSQL'); # call the function to transfer data from Python to PostgreSQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
+#process_data_transfer_toSQLDB(df, 'customer_shopping_behavior', 'PostgresSQL'); # call the function to transfer data from Python to PostgreSQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
 
-#process_data_transfer_toSQLDB(df, 'customer_shopping_behavior', 'MySQL'); # call the function to transfer data from Python to MySQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
+process_data_transfer_toSQLDB(df, 'customer_shopping_behavior', 'MySQL'); # call the function to transfer data from Python to MySQL database, passing the cleaned and processed DataFrame and the target table name as arguments.')
 
